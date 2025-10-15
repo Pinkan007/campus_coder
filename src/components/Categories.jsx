@@ -1,14 +1,14 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-  BookOpen, 
-  ShoppingBag, 
-  Code, 
-  Briefcase, 
-  MapPin, 
+import {
+  BookOpen,
+  ShoppingBag,
+  Code,
+  Briefcase,
+  MapPin,
   Calendar,
   GraduationCap,
   FileText,
-  MoreHorizontal
+  MoreHorizontal,
 } from "lucide-react";
 
 const categories = [
@@ -16,56 +16,56 @@ const categories = [
     title: "Blog",
     description: "Read the latest blogs",
     icon: BookOpen,
-    href: "/blogs"
+    href: "/blogs",
   },
   {
-    title: "Store", 
+    title: "Store",
     description: "Explore our store",
     icon: ShoppingBag,
-    href: "/store"
+    href: "/store",
   },
   {
     title: "Project",
-    description: "Discover innovative projects", 
+    description: "Discover innovative projects",
     icon: Code,
-    href: "/projects"
+    href: "/projects",
   },
   {
     title: "Freelance",
     description: "Hire top freelancers",
     icon: Briefcase,
-    href: "/freelance"
+    href: "/freelance",
   },
   {
     title: "Job",
     description: "Find the latest jobs",
     icon: MapPin,
-    href: "/jobs"
+    href: "/jobs",
   },
   {
     title: "Event",
     description: "Explore upcoming events",
     icon: Calendar,
-    href: "/events"
+    href: "/events",
   },
   {
     title: "Tutorials",
     description: "Learn with our tutorials",
     icon: GraduationCap,
-    href: "/tutorials"
+    href: "/tutorials",
   },
   {
     title: "Cheatsheet",
     description: "Access developer cheatsheets",
     icon: FileText,
-    href: "/cheatsheet"
+    href: "/cheatsheet",
   },
   {
     title: "More Categories",
     description: "View more categories",
     icon: MoreHorizontal,
-    href: "/more-categories"
-  }
+    href: "/more-categories",
+  },
 ];
 
 const Categories = () => {
@@ -85,7 +85,10 @@ const Categories = () => {
         {/* Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map((category, index) => (
-            <Card key={index} className="group hover:shadow-lg transition-all duration-300 cursor-pointer hover:-translate-y-1">
+            <Card
+              key={index}
+              className="group hover:shadow-lg transition-all duration-300 cursor-pointer hover:-translate-y-1"
+            >
               <CardContent className="p-6">
                 <div className="flex items-start space-x-4">
                   <div className="flex-shrink-0">

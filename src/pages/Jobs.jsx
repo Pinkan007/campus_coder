@@ -68,14 +68,14 @@ const Jobs = () => {
   const [selectedLocation, setSelectedLocation] = useState('All');
   const [filteredJobs, setFilteredJobs] = useState(mockJobs);
 
-  const handleSearch = (term: string) => {
+  const handleSearch = (term) => {
     setSearchTerm(term);
     filterJobs(term, selectedType, selectedLocation);
   };
 
-  const filterJobs = (search: string, type: string, location: string) => {
+  const filterJobs = (search, type, location) => {
     let filtered = mockJobs;
-    
+
     if (search) {
       filtered = filtered.filter(job =>
         job.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -83,11 +83,11 @@ const Jobs = () => {
         job.description.toLowerCase().includes(search.toLowerCase())
       );
     }
-    
+
     if (type !== 'All') {
       filtered = filtered.filter(job => job.type === type);
     }
-    
+
     if (location !== 'All') {
       if (location === 'Remote') {
         filtered = filtered.filter(job => job.remote);
@@ -95,14 +95,14 @@ const Jobs = () => {
         filtered = filtered.filter(job => job.location.includes(location));
       }
     }
-    
+
     setFilteredJobs(filtered);
   };
 
-  const canApplyToJob = (jobIndex: number) => {
+  const canApplyToJob = (index) => {
     if (!user) return false;
     if (hasSubscription('premium')) return true;
-    return jobIndex < 2; // Free users can apply to first 2 jobs
+    return index < 2; // Free users can apply to first 2 jobs
   };
 
   return (
@@ -139,7 +139,7 @@ const Jobs = () => {
               className="pl-10"
             />
           </div>
-          
+
           <div className="flex flex-col md:flex-row gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Job Type</label>
@@ -159,7 +159,7 @@ const Jobs = () => {
                 ))}
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <label className="text-sm font-medium">Location</label>
               <div className="flex flex-wrap gap-2">
@@ -222,7 +222,7 @@ const Jobs = () => {
               </CardHeader>
               <CardContent>
                 <CardDescription className="mb-4">{job.description}</CardDescription>
-                
+
                 <div className="space-y-3">
                   <div>
                     <h4 className="font-medium mb-2">Requirements:</h4>
@@ -232,7 +232,7 @@ const Jobs = () => {
                       ))}
                     </div>
                   </div>
-                  
+
                   <div className="flex justify-between items-center">
                     <Button variant="outline">Save Job</Button>
                     {canApplyToJob(index) ? (
@@ -255,13 +255,13 @@ const Jobs = () => {
         {filteredJobs.length === 0 && (
           <div className="text-center py-12">
             <Briefcase className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No jobs found</h3>
-            <p className="text-muted-foreground">Try adjusting your search or filter criteria</p>
+            <h3 className="text-lg font-semibold mb-2">No jobs
+  found</h3>  
+            <p className="text-muted-foreground">Try adjusting your search or filters to find what you're looking for.</p>
           </div>
-        )}
+        )}  
       </div>
     </div>
   );
-};
-
+}
 export default Jobs;

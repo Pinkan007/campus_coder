@@ -17,11 +17,11 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path) => location.pathname === path;
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   return (
@@ -38,26 +38,26 @@ const Header = () => {
 
           {/* Navigation */}
           <nav className="hidden lg:flex items-center space-x-2">
-            <Button variant={isActive('/') ? "default" : "ghost"} size="sm" asChild>
+            <Button variant={isActive("/") ? "default" : "ghost"} size="sm" asChild>
               <Link to="/">Home</Link>
             </Button>
-            <Button variant={isActive('/blogs') ? "default" : "ghost"} size="sm" asChild>
+            <Button variant={isActive("/blogs") ? "default" : "ghost"} size="sm" asChild>
               <Link to="/blogs">Blogs</Link>
             </Button>
-            <Button variant={isActive('/jobs') ? "default" : "ghost"} size="sm" asChild>
+            <Button variant={isActive("/jobs") ? "default" : "ghost"} size="sm" asChild>
               <Link to="/jobs">Jobs</Link>
             </Button>
-            <Button variant={isActive('/learn') ? "default" : "ghost"} size="sm" asChild>
+            <Button variant={isActive("/learn") ? "default" : "ghost"} size="sm" asChild>
               <Link to="/learn">Learn</Link>
             </Button>
-            <Button variant={isActive('/projects') ? "default" : "ghost"} size="sm" asChild>
+            <Button variant={isActive("/projects") ? "default" : "ghost"} size="sm" asChild>
               <Link to="/projects">Projects</Link>
             </Button>
-            <Button variant={isActive('/cheatsheet') ? "default" : "ghost"} size="sm" asChild>
+            <Button variant={isActive("/cheatsheet") ? "default" : "ghost"} size="sm" asChild>
               <Link to="/cheatsheet">Cheatsheet</Link>
             </Button>
             {isAdmin() && (
-              <Button variant={isActive('/admin') ? "default" : "ghost"} size="sm" asChild>
+              <Button variant={isActive("/admin") ? "default" : "ghost"} size="sm" asChild>
                 <Link to="/admin">Admin</Link>
               </Button>
             )}
@@ -70,7 +70,9 @@ const Header = () => {
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
+                    <AvatarFallback>
+                      {user.name ? user.name.charAt(0).toUpperCase() : "U"}
+                    </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>

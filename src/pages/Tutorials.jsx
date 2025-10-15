@@ -1,3 +1,4 @@
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { GraduationCap } from 'lucide-react';
 
@@ -12,7 +13,9 @@ const Tutorials = () => {
             <CardTitle>Tutorials Coming Soon</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground">Step-by-step tutorials and coding guides will be available soon!</p>
+            <p className="text-muted-foreground">
+              Step-by-step tutorials and coding guides will be available soon!
+            </p>
           </CardContent>
         </Card>
       </div>

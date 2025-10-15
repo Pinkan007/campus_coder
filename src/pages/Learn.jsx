@@ -85,18 +85,28 @@ const achievements = [
   { name: "Community Helper", description: "Help 10 other learners", unlocked: false }
 ];
 
+// Helper functions
+const getLevelBadge = (level) => {
+  switch(level) {
+    case 'Beginner': return 'default';
+    case 'Intermediate': return 'secondary';
+    case 'Advanced': return 'destructive';
+    default: return 'default';
+  }
+};
+
 const Learn = () => {
-  const { user, hasSubscription } = useAuth();
+  const { hasSubscription } = useAuth();
   const [activeTab, setActiveTab] = useState('paths');
 
-  const canAccessContent = (isFree: boolean) => {
-    if (isFree) return true;
-    return hasSubscription('premium');
+  const canAccessContent = (isFree) => {
+    return isFree || hasSubscription('premium');
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="space-y-8">
+
         {/* Header */}
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold text-foreground">Learning Center</h1>
@@ -108,27 +118,16 @@ const Learn = () => {
         {/* Navigation Tabs */}
         <div className="flex justify-center">
           <div className="flex space-x-1 bg-muted p-1 rounded-lg">
-            <Button
-              variant={activeTab === 'paths' ? 'default' : 'ghost'}
-              onClick={() => setActiveTab('paths')}
-              className="rounded-md"
-            >
-              Learning Paths
-            </Button>
-            <Button
-              variant={activeTab === 'tutorials' ? 'default' : 'ghost'}
-              onClick={() => setActiveTab('tutorials')}
-              className="rounded-md"
-            >
-              Quick Tutorials
-            </Button>
-            <Button
-              variant={activeTab === 'achievements' ? 'default' : 'ghost'}
-              onClick={() => setActiveTab('achievements')}
-              className="rounded-md"
-            >
-              Achievements
-            </Button>
+            {['paths', 'tutorials', 'achievements'].map((tab) => (
+              <Button
+                key={tab}
+                variant={activeTab === tab ? 'default' : 'ghost'}
+                onClick={() => setActiveTab(tab)}
+                className="rounded-md capitalize"
+              >
+                {tab.replace(/^\w/, c => c.toUpperCase()).replace('paths', 'Learning Paths').replace('tutorials', 'Quick Tutorials')}
+              </Button>
+            ))}
           </div>
         </div>
 
@@ -154,17 +153,11 @@ const Learn = () => {
               {learningPaths.map((path) => (
                 <Card key={path.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="aspect-video overflow-hidden">
-                    <img 
-                      src={path.image} 
-                      alt={path.title}
-                      className="w-full h-full object-cover"
-                    />
+                    <img src={path.image} alt={path.title} className="w-full h-full object-cover" />
                   </div>
                   <CardHeader>
                     <div className="flex items-center justify-between mb-2">
-                      <Badge variant={path.level === 'Beginner' ? 'default' : path.level === 'Intermediate' ? 'secondary' : 'destructive'}>
-                        {path.level}
-                      </Badge>
+                      <Badge variant={getLevelBadge(path.level)}>{path.level}</Badge>
                       {path.free && <Badge variant="outline">Free</Badge>}
                     </div>
                     <CardTitle className="line-clamp-2">{path.title}</CardTitle>
@@ -172,18 +165,9 @@ const Learn = () => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center">
-                        <Clock className="h-4 w-4 mr-1" />
-                        {path.duration}
-                      </div>
-                      <div className="flex items-center">
-                        <Star className="h-4 w-4 mr-1 text-yellow-500" />
-                        {path.rating}
-                      </div>
-                      <div className="flex items-center">
-                        <BookOpen className="h-4 w-4 mr-1" />
-                        {path.modules} modules
-                      </div>
+                      <div className="flex items-center"><Clock className="h-4 w-4 mr-1" />{path.duration}</div>
+                      <div className="flex items-center"><Star className="h-4 w-4 mr-1 text-yellow-500" />{path.rating}</div>
+                      <div className="flex items-center"><BookOpen className="h-4 w-4 mr-1" />{path.modules} modules</div>
                     </div>
 
                     {path.progress > 0 && (
@@ -192,24 +176,18 @@ const Learn = () => {
                           <span>Progress</span>
                           <span>{path.completedModules}/{path.modules} modules</span>
                         </div>
-                        <Progress value={path.progress} className="h-2" />
+                        <Progress value={path.progress} max={100} className="h-2" />
                       </div>
                     )}
 
                     <div className="flex space-x-2">
                       {canAccessContent(path.free) ? (
                         <>
-                          <Button className="flex-1">
-                            {path.progress > 0 ? 'Continue' : 'Start Learning'}
-                          </Button>
-                          <Button variant="outline" size="icon">
-                            <Play className="h-4 w-4" />
-                          </Button>
+                          <Button className="flex-1">{path.progress > 0 ? 'Continue' : 'Start Learning'}</Button>
+                          <Button variant="outline" size="icon"><Play className="h-4 w-4" /></Button>
                         </>
                       ) : (
-                        <Button disabled className="flex-1">
-                          Premium Required
-                        </Button>
+                        <Button disabled className="flex-1">Premium Required</Button>
                       )}
                     </div>
                   </CardContent>
@@ -225,15 +203,9 @@ const Learn = () => {
             {quickTutorials.map((tutorial) => (
               <Card key={tutorial.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="aspect-video overflow-hidden relative">
-                  <img 
-                    src={tutorial.thumbnail} 
-                    alt={tutorial.title}
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={tutorial.thumbnail} alt={tutorial.title} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                    <Button size="icon" className="h-12 w-12 rounded-full">
-                      <Play className="h-6 w-6" />
-                    </Button>
+                    <Button size="icon" className="h-12 w-12 rounded-full"><Play className="h-6 w-6" /></Button>
                   </div>
                 </div>
                 <CardHeader>
@@ -243,8 +215,7 @@ const Learn = () => {
                   </div>
                   <CardTitle className="text-lg">{tutorial.title}</CardTitle>
                   <div className="flex items-center text-muted-foreground">
-                    <Clock className="h-4 w-4 mr-1" />
-                    {tutorial.duration}
+                    <Clock className="h-4 w-4 mr-1" />{tutorial.duration}
                   </div>
                 </CardHeader>
               </Card>
@@ -257,28 +228,19 @@ const Learn = () => {
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Award className="h-5 w-5 mr-2" />
-                  Your Achievements
-                </CardTitle>
+                <CardTitle className="flex items-center"><Award className="h-5 w-5 mr-2" />Your Achievements</CardTitle>
                 <CardDescription>Track your learning progress and unlock new achievements</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {achievements.map((achievement, index) => (
-                    <div key={index} className={`p-4 rounded-lg border ${
-                      achievement.unlocked ? 'bg-primary/5 border-primary' : 'bg-muted border-muted'
-                    }`}>
+                    <div key={index} className={`p-4 rounded-lg border ${achievement.unlocked ? 'bg-primary/5 border-primary' : 'bg-muted border-muted'}`}>
                       <div className="flex items-center space-x-3">
-                        <div className={`p-2 rounded-full ${
-                          achievement.unlocked ? 'bg-primary text-primary-foreground' : 'bg-muted-foreground text-muted'
-                        }`}>
+                        <div className={`p-2 rounded-full ${achievement.unlocked ? 'bg-primary text-primary-foreground' : 'bg-muted-foreground text-muted'}`}>
                           <Award className="h-4 w-4" />
                         </div>
                         <div>
-                          <h3 className={`font-medium ${achievement.unlocked ? '' : 'text-muted-foreground'}`}>
-                            {achievement.name}
-                          </h3>
+                          <h3 className={`font-medium ${achievement.unlocked ? '' : 'text-muted-foreground'}`}>{achievement.name}</h3>
                           <p className="text-sm text-muted-foreground">{achievement.description}</p>
                         </div>
                       </div>
@@ -289,6 +251,7 @@ const Learn = () => {
             </Card>
           </div>
         )}
+
       </div>
     </div>
   );
