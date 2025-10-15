@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
-import { BookOpen, Calendar, User, Search, Filter } from 'lucide-react';
+import { BookOpen, Calendar, User, Search } from 'lucide-react';
 
 const mockBlogs = [
   {
@@ -58,17 +58,17 @@ const Blogs = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [filteredBlogs, setFilteredBlogs] = useState(mockBlogs);
 
-  const handleSearch = (term: string) => {
+  const handleSearch = (term) => {
     setSearchTerm(term);
     filterBlogs(term, selectedCategory);
   };
 
-  const handleCategoryFilter = (category: string) => {
+  const handleCategoryFilter = (category) => {
     setSelectedCategory(category);
     filterBlogs(searchTerm, category);
   };
 
-  const filterBlogs = (search: string, category: string) => {
+  const filterBlogs = (search, category) => {
     let filtered = mockBlogs;
     
     if (search) {
@@ -84,6 +84,8 @@ const Blogs = () => {
     
     setFilteredBlogs(filtered);
   };
+
+  const featuredBlog = filteredBlogs.find(blog => blog.featured);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -123,32 +125,32 @@ const Blogs = () => {
         </div>
 
         {/* Featured Blog */}
-        {filteredBlogs.find(blog => blog.featured) && (
+        {featuredBlog && (
           <Card className="overflow-hidden">
             <div className="md:flex">
               <div className="md:w-1/2">
                 <img 
-                  src={filteredBlogs.find(blog => blog.featured)?.image} 
+                  src={featuredBlog.image} 
                   alt="Featured blog"
                   className="w-full h-64 md:h-full object-cover"
                 />
               </div>
               <div className="md:w-1/2 p-6">
                 <Badge className="mb-2">Featured</Badge>
-                <h2 className="text-2xl font-bold mb-2">{filteredBlogs.find(blog => blog.featured)?.title}</h2>
-                <p className="text-muted-foreground mb-4">{filteredBlogs.find(blog => blog.featured)?.excerpt}</p>
+                <h2 className="text-2xl font-bold mb-2">{featuredBlog.title}</h2>
+                <p className="text-muted-foreground mb-4">{featuredBlog.excerpt}</p>
                 <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-4">
                   <div className="flex items-center">
                     <User className="h-4 w-4 mr-1" />
-                    {filteredBlogs.find(blog => blog.featured)?.author}
+                    {featuredBlog.author}
                   </div>
                   <div className="flex items-center">
                     <Calendar className="h-4 w-4 mr-1" />
-                    {filteredBlogs.find(blog => blog.featured)?.date}
+                    {featuredBlog.date}
                   </div>
                   <div className="flex items-center">
                     <BookOpen className="h-4 w-4 mr-1" />
-                    {filteredBlogs.find(blog => blog.featured)?.readTime}
+                    {featuredBlog.readTime}
                   </div>
                 </div>
                 <Button>Read More</Button>

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,64 +13,22 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
+
   const { login, register, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   // Redirect if already logged in
-  if (user) {
-    navigate('/');
-    return null;
-  }
+  useEffect(() => {
+    if (user) navigate('/');
+  }, [user, navigate]);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    
-    const success = await login(email, password);
-    if (success) {
-      toast({
-        title: "Login successful",
-        description: "Welcome back to TheCampusCoders!",
-      });
-      navigate('/');
-    } else {
-      toast({
-        title: "Login failed",
-        description: "Invalid email or password. Try admin@test.com / admin123 for admin access.",
-        variant: "destructive",
-      });
-    }
-    setLoading(false);
-  };
-
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    
-    const success = await register(email, password, name);
-    if (success) {
-      toast({
-        title: "Registration successful",
-        description: "Welcome to TheCampusCoders!",
-      });
-      navigate('/');
-    } else {
-      toast({
-        title: "Registration failed",
-        description: "User with this email already exists.",
-        variant: "destructive",
-      });
-    }
-    setLoading(false);
-  };
-
-  const createAdminUser = () => {
+  // Create admin user if not exists
+  useEffect(() => {
     const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const adminExists = users.find((u: any) => u.email === 'admin@test.com');
-    
+    const adminExists = users.some((u) => u.email === 'admin@test.com');
     if (!adminExists) {
-      const adminUser = {
+      users.push({
         id: 'admin',
         email: 'admin@test.com',
         password: 'admin123',
@@ -78,16 +36,50 @@ const Login = () => {
         role: 'admin',
         subscription: 'pro',
         joinedAt: new Date().toISOString(),
-      };
-      users.push(adminUser);
+      });
       localStorage.setItem('users', JSON.stringify(users));
     }
+  }, []);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const success = await login(email, password);
+    if (success) {
+      toast({
+        title: 'Login successful',
+        description: 'Welcome back to TheCampusCoders!',
+      });
+      navigate('/');
+    } else {
+      toast({
+        title: 'Login failed',
+        description: 'Invalid email or password. Try admin@test.com / admin123 for admin access.',
+        variant: 'destructive',
+      });
+    }
+    setLoading(false);
   };
 
-  // Create admin user on component mount
-  useState(() => {
-    createAdminUser();
-  });
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const success = await register(email, password, name);
+    if (success) {
+      toast({
+        title: 'Registration successful',
+        description: 'Welcome to TheCampusCoders!',
+      });
+      navigate('/');
+    } else {
+      toast({
+        title: 'Registration failed',
+        description: 'User with this email already exists.',
+        variant: 'destructive',
+      });
+    }
+    setLoading(false);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
@@ -107,7 +99,8 @@ const Login = () => {
               <TabsTrigger value="login">Login</TabsTrigger>
               <TabsTrigger value="register">Register</TabsTrigger>
             </TabsList>
-            
+
+            {/* Login Tab */}
             <TabsContent value="login" className="space-y-4">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div>
@@ -142,7 +135,8 @@ const Login = () => {
                 <p>Or register a new account</p>
               </div>
             </TabsContent>
-            
+
+            {/* Register Tab */}
             <TabsContent value="register" className="space-y-4">
               <form onSubmit={handleRegister} className="space-y-4">
                 <div>

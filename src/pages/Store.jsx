@@ -1,3 +1,4 @@
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShoppingBag } from 'lucide-react';
 
@@ -12,7 +13,9 @@ const Store = () => {
             <CardTitle>Store Coming Soon</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground">Our store with developer merchandise and resources will be available soon!</p>
+            <p className="text-muted-foreground">
+              Our store with developer merchandise and resources will be available soon!
+            </p>
           </CardContent>
         </Card>
       </div>

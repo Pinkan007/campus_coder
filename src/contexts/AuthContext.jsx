@@ -1,27 +1,6 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: 'user' | 'admin';
-  subscription: 'free' | 'premium' | 'pro';
-  subscriptionExpiry?: string;
-  avatar?: string;
-  joinedAt: string;
-}
-
-interface AuthContextType {
-  user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (email: string, password: string, name: string) => Promise<boolean>;
-  logout: () => void;
-  updateUser: (userData: Partial<User>) => void;
-  isAdmin: () => boolean;
-  hasSubscription: (level: 'premium' | 'pro') => boolean;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext();
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -31,12 +10,8 @@ export const useAuth = () => {
   return context;
 };
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('currentUser');
@@ -45,9 +20,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email, password) => {
     const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const foundUser = users.find((u: any) => u.email === email && u.password === password);
+    const foundUser = users.find((u) => u.email === email && u.password === password);
     
     if (foundUser) {
       const { password: _, ...userWithoutPassword } = foundUser;
@@ -58,14 +33,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return false;
   };
 
-  const register = async (email: string, password: string, name: string): Promise<boolean> => {
+  const register = async (email, password, name) => {
     const users = JSON.parse(localStorage.getItem('users') || '[]');
     
-    if (users.find((u: any) => u.email === email)) {
+    if (users.find((u) => u.email === email)) {
       return false; // User already exists
     }
 
-    const newUser: User & { password: string } = {
+    const newUser = {
       id: Date.now().toString(),
       email,
       password,
@@ -89,7 +64,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     localStorage.removeItem('currentUser');
   };
 
-  const updateUser = (userData: Partial<User>) => {
+  const updateUser = (userData) => {
     if (!user) return;
     
     const updatedUser = { ...user, ...userData };
@@ -97,7 +72,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     localStorage.setItem('currentUser', JSON.stringify(updatedUser));
     
     const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const userIndex = users.findIndex((u: any) => u.id === user.id);
+    const userIndex = users.findIndex((u) => u.id === user.id);
     if (userIndex !== -1) {
       users[userIndex] = { ...users[userIndex], ...userData };
       localStorage.setItem('users', JSON.stringify(users));
@@ -106,7 +81,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const isAdmin = () => user?.role === 'admin';
 
-  const hasSubscription = (level: 'premium' | 'pro') => {
+  const hasSubscription = (level) => {
     if (!user) return false;
     if (user.subscription === 'free') return false;
     if (level === 'premium') return ['premium', 'pro'].includes(user.subscription);
@@ -115,15 +90,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      login,
-      register,
-      logout,
-      updateUser,
-      isAdmin,
-      hasSubscription,
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        register,
+        logout,
+        updateUser,
+        isAdmin,
+        hasSubscription,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

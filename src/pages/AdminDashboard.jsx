@@ -1,16 +1,13 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuth, User } from '@/contexts/AuthContext';
-import { Users, Crown, Shield, TrendingUp, DollarSign } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Users, Crown, Shield, DollarSign } from 'lucide-react';
 
 const AdminDashboard = () => {
-  const { user, isAdmin } = useAuth();
-  const [users, setUsers] = useState<(User & { password: string })[]>([]);
+  const { isAdmin } = useAuth();
+  const [users, setUsers] = useState([]);
   const [stats, setStats] = useState({
     totalUsers: 0,
     freeUsers: 0,
@@ -28,8 +25,8 @@ const AdminDashboard = () => {
   const loadUsers = () => {
     const savedUsers = JSON.parse(localStorage.getItem('users') || '[]');
     setUsers(savedUsers);
-    
-    const stats = savedUsers.reduce((acc: any, user: User) => {
+
+    const stats = savedUsers.reduce((acc, user) => {
       acc.totalUsers++;
       if (user.subscription === 'free') acc.freeUsers++;
       else if (user.subscription === 'premium') {
@@ -41,23 +38,19 @@ const AdminDashboard = () => {
       }
       return acc;
     }, { totalUsers: 0, freeUsers: 0, premiumUsers: 0, proUsers: 0, totalRevenue: 0 });
-    
+
     setStats(stats);
   };
 
-  const updateUserRole = (userId: string, newRole: 'user' | 'admin') => {
-    const updatedUsers = users.map(u => 
-      u.id === userId ? { ...u, role: newRole } : u
-    );
+  const updateUserRole = (userId, newRole) => {
+    const updatedUsers = users.map(u => u.id === userId ? { ...u, role: newRole } : u);
     setUsers(updatedUsers);
     localStorage.setItem('users', JSON.stringify(updatedUsers));
     loadUsers();
   };
 
-  const updateUserSubscription = (userId: string, newSubscription: 'free' | 'premium' | 'pro') => {
-    const updatedUsers = users.map(u => 
-      u.id === userId ? { ...u, subscription: newSubscription } : u
-    );
+  const updateUserSubscription = (userId, newSubscription) => {
+    const updatedUsers = users.map(u => u.id === userId ? { ...u, subscription: newSubscription } : u);
     setUsers(updatedUsers);
     localStorage.setItem('users', JSON.stringify(updatedUsers));
     loadUsers();
@@ -94,7 +87,7 @@ const AdminDashboard = () => {
               <div className="text-2xl font-bold">{stats.totalUsers}</div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Free Users</CardTitle>
@@ -104,7 +97,7 @@ const AdminDashboard = () => {
               <div className="text-2xl font-bold">{stats.freeUsers}</div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Premium Users</CardTitle>
@@ -114,7 +107,7 @@ const AdminDashboard = () => {
               <div className="text-2xl font-bold">{stats.premiumUsers}</div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Pro Users</CardTitle>
@@ -124,7 +117,7 @@ const AdminDashboard = () => {
               <div className="text-2xl font-bold">{stats.proUsers}</div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Revenue</CardTitle>
@@ -158,7 +151,7 @@ const AdminDashboard = () => {
                           <Badge variant={userData.role === 'admin' ? 'destructive' : 'secondary'}>
                             {userData.role}
                           </Badge>
-                          <Badge 
+                          <Badge
                             className={
                               userData.subscription === 'pro' ? 'bg-yellow-500 text-white' :
                               userData.subscription === 'premium' ? 'bg-blue-500 text-white' :
@@ -173,20 +166,20 @@ const AdminDashboard = () => {
                           Joined: {new Date(userData.joinedAt).toLocaleDateString()}
                         </p>
                       </div>
-                      
+
                       <div className="flex space-x-2">
                         <select
                           value={userData.role}
-                          onChange={(e) => updateUserRole(userData.id, e.target.value as 'user' | 'admin')}
+                          onChange={(e) => updateUserRole(userData.id, e.target.value)}
                           className="px-2 py-1 border rounded text-sm"
                         >
                           <option value="user">User</option>
                           <option value="admin">Admin</option>
                         </select>
-                        
+
                         <select
                           value={userData.subscription}
-                          onChange={(e) => updateUserSubscription(userData.id, e.target.value as 'free' | 'premium' | 'pro')}
+                          onChange={(e) => updateUserSubscription(userData.id, e.target.value)}
                           className="px-2 py-1 border rounded text-sm"
                         >
                           <option value="free">Free</option>
@@ -219,7 +212,7 @@ const AdminDashboard = () => {
                         <p className="text-sm text-muted-foreground">Published articles</p>
                       </CardContent>
                     </Card>
-                    
+
                     <Card>
                       <CardHeader>
                         <CardTitle className="text-lg">Projects</CardTitle>
@@ -229,7 +222,7 @@ const AdminDashboard = () => {
                         <p className="text-sm text-muted-foreground">Community projects</p>
                       </CardContent>
                     </Card>
-                    
+
                     <Card>
                       <CardHeader>
                         <CardTitle className="text-lg">Job Listings</CardTitle>
@@ -239,7 +232,7 @@ const AdminDashboard = () => {
                         <p className="text-sm text-muted-foreground">Active job posts</p>
                       </CardContent>
                     </Card>
-                    
+
                     <Card>
                       <CardHeader>
                         <CardTitle className="text-lg">Tutorials</CardTitle>

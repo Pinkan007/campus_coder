@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -175,12 +175,12 @@ const Cheatsheet = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState('All');
   const [filteredCheatsheets, setFilteredCheatsheets] = useState(cheatsheets);
 
-  const handleSearch = (term: string) => {
+  const handleSearch = (term) => {
     setSearchTerm(term);
     filterCheatsheets(term, selectedCategory, selectedDifficulty);
   };
 
-  const filterCheatsheets = (search: string, category: string, difficulty: string) => {
+  const filterCheatsheets = (search, category, difficulty) => {
     let filtered = cheatsheets;
     
     if (search) {
@@ -202,12 +202,12 @@ const Cheatsheet = () => {
     setFilteredCheatsheets(filtered);
   };
 
-  const canAccessCheatsheet = (isFree: boolean) => {
+  const canAccessCheatsheet = (isFree) => {
     if (isFree) return true;
     return hasSubscription('premium');
   };
 
-  const copyToClipboard = (text: string) => {
+  const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
   };
 
